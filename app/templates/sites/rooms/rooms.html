@@ -8,7 +8,22 @@
                 <h3 class="panel-title">Rooms</h3>
             </div>
             <div class="panel-body">
-                <p>Rooms</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h1>Rooms</h1>
+                        <form action="{{url_for('roomsBP.roomsView')}}" method="get">
+                            <input type="text" class="form-control" name="location" id="location" placeholder="Location"><br>
+                            <input type="text" class="form-control" name="limit" id="limit" placeholder="Search limit"><br>
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h1>Search results</h1>
+                    {% for r in data %}
+                        <p>Lat: {{r['lat']}}<br>Long: {{r['long']}}<br>Pris: {{r['price']}}</p>
+                    {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -54,9 +54,6 @@ app.register_blueprint(wifiBP, url_prefix='/wifi')
 
 # Error handlers
 
-@app.errorhandler(404)
-def page_not_found():
-    return render_template('errors/404.html')
 
 @app.route('/error404')
 def error404():
