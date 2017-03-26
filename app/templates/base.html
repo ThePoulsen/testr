@@ -1,0 +1,121 @@
+{% block doc -%}
+<!DOCTYPE html>
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+<head>
+    {%- block head %}
+
+    <title>{% block title %}Lendr{% endblock title %}</title>
+
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
+
+    {%- block styles %}
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+
+    {%- endblock styles %}
+    {%- endblock head %}
+</head>
+
+<body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+
+    {% block navbar %}
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="{{url_for('indexBP.indexView')}}">Lendr</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="{{url_for('indexBP.indexView')}}">Home</a></li>
+
+                    <li><a href="{{url_for('mapBP.mapView')}}">Map</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sites <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{url_for('moneyBP.moneyView')}}">money</a></li>
+                            <li><a href="{{url_for('petsBP.petsView')}}">pets</a></li>
+                            <li><a href="{{url_for('roomsBP.roomsView')}}">rooms</a></li>
+                            <li><a href="{{url_for('servicesBP.servicesView')}}">services</a></li>
+                            <li><a href="{{url_for('transportBP.transportView')}}">transport</a></li>
+                            <li><a href="{{url_for('wifiBP.wifiView')}}">wifi</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Error pages <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{url_for('error404')}}">Page not found</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="{{url_for('userBP.userProfileView')}}">Profile</a></li>
+                    <li><a href="{{url_for('security.logout')}}">Logout</a></li>
+                    {% else %}
+                    <li><a href="{{url_for('security.login')}}">Login</a></li>
+                    <li><a href="{{url_for('security.register')}}">Register Account</a></li>
+                    {% endif %}
+                </ul>
+            </div><!--/.navbar-collapse -->
+        </div>
+    </nav>
+    {%- endblock navbar %}
+    {% block flashMessages -%}
+    <div class="row">
+        <div class="container-fluid">
+            <div class="col col-12" style="max-width:600px;">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4>{{ category }}</h4>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    {% endblock flashMessages -%}
+
+    {% block content -%}
+    {%- endblock content %}
+
+    {% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+    // Ensures active class on active pages in navigation
+    var url = window.location;
+        // Will only work if string in href matches with location
+        $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
+
+        // Will also work for relative and absolute hrefs
+        $('ul.nav a').filter(function() {
+            return this.href == url;
+        }).parent().addClass('active');
+    </script>
+
+    {%- endblock scripts %}
+    {%- endblock body %}
+
+</body>
+{%- endblock html %}
+
+</html>
+{% endblock doc -%}

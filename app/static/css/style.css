@@ -1,0 +1,36 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+html, body {
+    height: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+  padding-top: 50px;
+}
+
+.cont {
+    width:100%;
+    display: block;
+    overflow: hidden;
+    height: 100%; /** IE 6 */
+    min-height: 100%;
+}
+
+#mapid {
+    overflow: hidden;
+    height: 100%;
+}
+
+.leaflet-right {
+    display:none;
+}
+
+@media only screen and (max-device-width: 480px) {
+
+}
+
+@media only screen and (min-device-width: 481px) {
+
+}

@@ -1,0 +1,54 @@
+Technology stack
+
+Source control:
+	Git
+	GitHub
+
+Backend programming language:
+	Python 2.7
+
+Web framework:
+	Python Flask
+
+Database:
+	PostgreSQL
+	sqlalchemy (lets us write python to database)
+
+Templating language:
+	Jinja - Built into Flask
+
+Front end styling:
+	Twitter Bootstrap
+	CSS / LESS
+
+Deployment:
+	Web-server: ngnix
+	Web Server Gateway Interface (WSGI) server: gunicorn 
+	
+Hardware:
+	Database server
+	Web server (API)
+	Wab server (frontend)
+
+Dev and server environment:
+	Ubuntu linux
+
+Python Plugins
+	sqlalchemy
+	psycopg2
+	Sijax
+	wtforms
+	requests
+
+Flask Plugins
+	Flask-security - login
+	Flask-social - facebook, twitter, google login
+	Flask-mail
+	Flask-SQLAlchemy
+	Flask-migrate
+	Flask-script
+	Flask-sijax
+	Flask-wtf
+	Flask-HTMLmin - Will minify website, for both security and optimization
+
+

@@ -1,0 +1,25 @@
+design emails
+design login / Register pages
+create index page
+design error pages
+build navigation menu
+
+build mobile frontend
+build web frontend
+
+widths?
+    <= 320px
+    >  320px
+    >  480px
+    >  768px
+    >  960px
+    
+implement mobile styling
+implement web styling
+
+build api interface for gomore / airBNB or similar, to get started
+
+setup facebook dev account for authorization
+setup twitter dev account for authorization
+setup flask-social for authorisation
+
