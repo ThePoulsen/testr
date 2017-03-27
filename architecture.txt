@@ -1,0 +1,50 @@
+Email
+ - templates for outgoing emails
+ - tool to handle notifications
+ - user must be able to contact us through mail
+Forms
+ - Search entry
+ - Register / Login
+ - Settings
+Search
+ - Filters
+ -- checkboxes
+ -- dropdown
+Site templates
+ - Static base
+ - App base
+ - Email templates
+ - Error pages
+Universal error handling
+ - Catchall functions in flask
+User management
+ - Role management
+ - Regist/login/logout
+ - Profile page with settings
+ - Change password
+Settings
+ - User managed settings
+ -- Define which external partners to use/allow
+ - System settings
+ - Admin settings
+Admin interface
+ - Statistics
+Integrations
+ - Engine to access API
+ - Authorization
+ - Engine to communicate with API
+ - Ensure affiliate rewards
+API
+Database
+Styling
+ - CSS
+ - LESS
+Static pages
+ - Support pages
+ - Index page
+ - Contact
+ - About
+Languages
+User cookies
+ - Remember me
+ - User settings

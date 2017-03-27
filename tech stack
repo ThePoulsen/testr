@@ -50,5 +50,4 @@ Flask Plugins
 	Flask-sijax
 	Flask-wtf
 	Flask-HTMLmin - Will minify website, for both security and optimization
-
-
+    Flask-Babel - translation toolkit
