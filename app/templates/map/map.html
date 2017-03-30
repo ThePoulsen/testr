@@ -4,6 +4,23 @@
 
 {% block styles %}
 {{super()}}
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='css/datepicker.min.css') }}">
+<link rel="stylesheet" href="https://openlayers.org/en/v4.0.1/css/ol.css" type="text/css">
+
+
+<style>
+    .map {
+        height: 1000px;
+        width: 100%;
+    }
+
+    #popup {
+
+        width: 250px;
+    }
+</style>
+
+<script src="https://openlayers.org/en/v4.0.1/build/ol.js" type="text/javascript"></script>
 {%- endblock %}
 
 {% block content %}
@@ -14,32 +31,257 @@
         </div>
         <div class="panel-body">
             <form id="searchForm" method="post">
-                <label>Jeg vil gerne til</label>
-                <input class="form-control" type="text" name="location" placeholder="Bynavn">
-                <br>
-                <button class="btn btn-primary pull-right" type="submit">Søg</button>
+                <div class="form-group">
+                    {{ form.destCity.label }}
+                    {{ form.destCity(autocomplete="false", class_='form-control ')}}
+                </div>
+
+                <div class="form-group">
+                    {{ form.currency.label }}
+                    {{ form.currency(autocomplete="false", class_='form-control ')}}
+                </div>
+
+                <div class="checkbox">
+                <label class="checkbox">
+                    {{ form.available(onclick="showHide()") }}
+                    {{ form.available.label.text|safe }}
+                </label>
+                </div>
+                <div id="showHideDiv" class="hidden">
+
+                    {{ form.checkin.label }}
+                    <div id="checkinDiv" class="input-group date">
+                        {{ form.checkin(placeholder="dd/mm/yyyy", autocomplete="false", class_='form-control ')}}<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                    <br>
+
+                    {{ form.checkout.label }}
+                    <div id="checkoutDiv" class="input-group date">
+                        {{ form.checkout(placeholder="dd/mm/yyyy", autocomplete="false", class_='form-control ')}}<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+                    </div>
+                    <br>
+                </div>
+
+                <div style="float:right;">
+                    {{ form.csrf_token }}
+                    <button class="btn btn-primary pull-right" type="submit">Søg</button>
+                </div>
+
+                <button id="ClearButton" class="btn btn-primary pull-right" >Clear</button>
+
+
             </form>
         </div>
     </div>
 </div>
 <div class="col col-sm-8 col-md-8 col-lg-9">
-    <pre><code><div id="rooms" style="height:1000px"></div></code> </pre>
+    <div id="map" class="map"><div id="popup"></div></div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 {{super()}}
-<!--Form sijax submission-->
+
+
+<!--Map script-->
 <script type="text/javascript">
-$(function() {
-    $('#searchForm').bind('submit', function() {
-        //Get form values
-        var values = Sijax.getFormValues('#searchForm');
-        //Send form values to sijax handler
-        Sijax.request('listReturn', [values]);
-        //Prevent the form from being submitted
-        return false;
+
+    var featureList = [];
+
+    var json = []
+
+    $.each(json, function( index, value ) {
+        var iconFeature = new ol.Feature({
+            geometry: new ol.geom.Point(ol.proj.transform(value['geom'], 'EPSG:4326', 'EPSG:3857')),
+            geom: value['geom'],
+            City: value['City'],
+            ID: value['ID']
+
+        });
+        featureList.push(iconFeature);
     });
-});
+
+    var vectorSource = new ol.source.Vector({
+        features: featureList //add an array of features
+    });
+
+    var iconStyle = new ol.style.Style({
+        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+        anchor: [0.5, 46],
+        anchorXUnits: 'fraction',
+        anchorYUnits: 'pixels',
+        opacity: 0.75,
+        src: 'https://openlayers.org/en/v4.0.1/examples/data/icon.png'
+        }))
+    });
+
+
+    var vectorLayer = new ol.layer.Vector({
+        source: vectorSource,
+        style: iconStyle
+    });
+
+    var rasterLayer = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    var map = new ol.Map({
+        layers: [
+            rasterLayer,
+            vectorLayer
+        ],
+        target: document.getElementById('map'),
+        view: new ol.View({
+            center: ol.proj.transform([10.640684,55.741612], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 7
+        })
+    });
+
+    var popup = new ol.Overlay({
+        element: document.getElementById('popup'),
+        positioning: 'bottom-center',
+        stopEvent: false,
+        offset: [0, -50]
+    });
+    map.addOverlay(popup);
+
+    // display popup on click
+    map.on('click', function(evt) {
+        var element = popup.getElement();
+        var coordinate = evt.coordinate;
+
+        var feature = map.forEachFeatureAtPixel(evt.pixel,
+        function(feature, layer) {
+            return feature;
+        });
+
+        if (feature) {
+
+            $(element).popover('destroy');
+            popup.setPosition(coordinate);
+
+            // the keys are quoted to prevent renaming in ADVANCED mode.
+            $(element).popover({
+                'placement': 'top',
+                'animation': false,
+                'html': true,
+                'content': '<b>ID</b>: '+feature.get('ID')+'<br>'+
+                           '<b>City</b>: '+feature.get('City')+'<br>'+
+                           '<b>geom</b>: '+feature.get('geom')+'<br>'
+            });
+
+            $(element).popover('show');
+
+        } else {
+
+            $(element).popover('destroy');
+            popup.setPosition(undefined);
+        }
+    });
+
+    // change mouse cursor when over marker
+    map.on('pointermove', function(e) {
+        if (e.dragging) {
+            $(element).popover('destroy');
+            return;
+        }
+        var pixel = map.getEventPixel(e.originalEvent);
+        var hit = map.hasFeatureAtPixel(pixel);
+            map.getTarget().style.cursor = hit ? 'pointer' : '';
+    });
+
+    function clearMap() {
+        vectorSource.clear();
+    };
+
+    function redrawMap(data) {
+
+        var features = [];
+        var json = data;
+        $.each(json, function( index, value ) {
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform(value['geom'], 'EPSG:4326', 'EPSG:3857')),
+                geom: value['geom'],
+                City: value['City'],
+                ID: value['ID']
+
+            });
+            features.push(iconFeature);
+        });
+        vectorSource.addFeatures(features);
+        var extent = vectorSource.getExtent();
+        map.getView().fit(extent, {maxZoom : 12, duration: 1000});
+    };
+
+
 </script>
+
+
+<!--Sijax script-->
+<script type="text/javascript">
+    $(function() {
+        $('#searchForm').bind('submit', function() {
+            //Get form values
+            var values = Sijax.getFormValues('#searchForm');
+            //Send form values to sijax handler
+            Sijax.request('listReturn', [values]);
+            //Prevent the form from being submitted
+            return false;
+        });
+    });
+
+    $(function() {
+        $('#ClearButton').bind('click', function() {
+            Sijax.request('ClearButton');
+            //Prevent the form from being submitted
+            return false;
+        });
+    });
+
+    $(function() {
+        $('#redrawButton').bind('click', function() {
+            Sijax.request('redrawButton');
+            //Prevent the form from being submitted
+            return false;
+        });
+    });
+</script>
+
+
+
+
+
+
+<script src="{{url_for('static', filename='js/datepicker.min.js')}}"></script>
+<script src="{{url_for('static', filename='js/datepicker.en-GB.min.js')}}"></script>
+
+<!--Show/Hide dates-->
+<script type="text/javascript">
+    function showHide()
+        {
+          if (document.getElementById('available').checked)
+          {
+              document.getElementById("showHideDiv").className = "";
+          } else {
+              document.getElementById("showHideDiv").className = "hidden";
+              $("#checkin").val(null);
+              $("#checkout").val(null);
+          }
+        }
+</script>
+
+
+<!--Datepicker script-->
+<script type="text/javascript">
+    $('#searchForm .input-group.date').datepicker({
+        weekStart: 1,
+        todayHighlight: true,
+        language: "en-GB",
+        toggleActive: true,
+        autoclose: true,
+        format: 'yyyy-mm-dd',
+    });
+</script>
+
+<script></script>
 {%- endblock %}
