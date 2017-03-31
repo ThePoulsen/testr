@@ -9,6 +9,7 @@
 
     {%- block metas %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
     {%- endblock metas %}
 
     {%- block styles %}
@@ -43,8 +44,8 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sites <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="{{url_for('roomsBP.roomsView')}}">rooms</a></li>
-                            <li><a href="{{url_for('transportBP.transportView')}}">transport</a></li>
+                            <li><a href="{{url_for('roomsBP.roomMapSearchView')}}">rooms</a></li>
+                            <li><a href="{{url_for('transportBP.transportMapSearchView')}}">transport</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">

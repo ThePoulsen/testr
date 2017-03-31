@@ -1,29 +1,23 @@
 ## -*- coding: utf-8 -*-
 
-from flask import render_template, Blueprint, request, url_for, jsonify
+from flask import render_template, Blueprint, request, url_for, g
 from app.services.services import errorMessage, successMessage
 from app import app
-from services import airbnb, airbnbSearch
+import flask_sijax
+from sijax import SijaxHandler
+from forms import searchRoomForm
 
 roomsBP = Blueprint('roomsBP', __name__)
 
-@roomsBP.route('/')
-def roomsView():
-    location = request.args.get('location')
-    limit = request.args.get('limit')
-    search=[]
-    if location:
-        if limit:
-            search = airbnbSearch(location,limit)
+@flask_sijax.route(roomsBP, '/', methods=['GET'])
+def roomMapSearchView():
 
-    data = []
-    for r in search:
-        lat = r['listing']['lat']
-        long = r['listing']['lng']
-        price = r['pricing_quote']['localized_nightly_price']
-        temp = {'lat':lat,
-                'long':long,
-                'price':price}
-        data.append(temp)
+    kwargs = {'title':'Search for rooms'}
 
-    return render_template('sites/rooms/rooms.html', data=data)
+    if g.sijax.is_sijax_request:
+        g.sijax.register_object(SijaxHandler)
+        return g.sijax.process_request()
+
+    form = searchRoomForm(currency='DKK')
+
+    return render_template('sites/rooms/rooms.html', form=form, **kwargs)

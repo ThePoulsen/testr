@@ -105,20 +105,21 @@
         features: featureList //add an array of features
     });
 
-    var iconStyle = new ol.style.Style({
+    var airbnbIcon = new ol.style.Style({
         image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
         anchor: [0.5, 46],
         anchorXUnits: 'fraction',
         anchorYUnits: 'pixels',
-        opacity: 0.75,
-        src: 'https://openlayers.org/en/v4.0.1/examples/data/icon.png'
+        opacity: 1.0,
+        scale: 0.08,
+        src: 'https://cdn3.iconfinder.com/data/icons/map-markers-1/512/residence-512.png'
         }))
     });
 
 
     var vectorLayer = new ol.layer.Vector({
         source: vectorSource,
-        style: iconStyle
+        style: airbnbIcon
     });
 
     var rasterLayer = new ol.layer.Tile({
